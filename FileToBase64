@@ -1,0 +1,123 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Arrays;
+import java.util.List;
+
+import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
+public class FileToBase64 {
+    /**
+     * <p>
+     * 将文件转成base64 字符串
+     * </p>
+     * 
+     * @param path 文件路径
+     * @return
+     * @throws Exception
+     */
+    public static String encodeBase64File(String path) throws Exception {
+	File file = new File(path);
+	FileInputStream inputFile = new FileInputStream(file);
+	byte[] buffer = new byte[(int) file.length()];
+	inputFile.read(buffer);
+	inputFile.close();
+	return new BASE64Encoder().encode(buffer);
+    }
+
+    /**
+     * <p>
+     * 将base64字符解码保存文件
+     * </p>
+     * 
+     * @param base64Code
+     * @param targetPath
+     * @throws Exception
+     */
+    public static void decoderBase64File(String base64Code, String targetPath) throws Exception {
+	byte[] buffer = new BASE64Decoder().decodeBuffer(base64Code);
+	FileOutputStream out = new FileOutputStream(targetPath);
+	out.write(buffer);
+	out.close();
+    }
+
+    /**
+     * <p>
+     * 将base64字符保存文本文件
+     * </p>
+     * 
+     * @param base64Code
+     * @param targetPath
+     * @throws Exception
+     */
+    public static void toFile(String base64Code, String targetPath) throws Exception {
+	byte[] buffer = base64Code.getBytes();
+	FileOutputStream out = new FileOutputStream(targetPath);
+	out.write(buffer);
+	out.close();
+    }
+
+    public static void main(String[] args) throws Exception {
+	String fileName = "CUBA 框架开发者手册";
+	FileUtils.forceMkdir(new File(fileName));
+	writeFile(encode("y:/" + fileName + ".pdf"), "y:/66");
+
+    }
+
+    private static String encode(String filePath) {
+	try {
+	    String base64Code1 = encodeBase64File(filePath);
+	    System.out.println(base64Code1);
+	    return base64Code1;
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+	return null;
+    }
+
+    private static void writeFile(String base64Code1, String folder) throws Exception {
+	FileUtils.cleanDirectory(new File(folder));
+//	System.out.println(StringUtils.split(base64Code1).length);
+	String[] codearr = StringUtils.split(base64Code1);
+	List<String> ss = Arrays.asList(codearr);
+	List<List<String>> lines = ListUtils.partition(ss, 12100);
+	for (int i = 0; i < lines.size(); i++) {
+	    String filename = StringUtils.leftPad(i + "", 2, "0");
+	    File outputFile = new File(folder, filename);
+	    FileUtils.writeLines(outputFile, "utf-8", lines.get(i));
+	}
+//	for (int i = 1; i < max; i++) {
+//
+//	    String filename = StringUtils.leftPad(i + "", 2, "0");
+//
+//	    File outputFile = new File(folder, filename);
+//	    Collection<?> lines;
+//	    // if (!outputFile.exists()) {
+////		outputFile.createNewFile();
+////	    }
+////	    if (FileUtils.sizeOf(outputFile) >= FileUtils.ONE_MB) {
+////		filename = StringUtils.leftPad(start + 1 + "", 2, "0");
+////	    }
+////	    FileUtils.writeStringToFile(outputFile, data, "utf-8", true);
+//	    FileUtils.writeLines(outputFile, "utf-8", lines);
+//	}
+
+    }
+
+    private static void decode() {
+	try {
+	    String base64Code = "";
+	    FileInputStream fi = new FileInputStream(new File("y:/11.txt"));
+
+	    decoderBase64File(base64Code, "y:/2.zip");
+	    System.out.println("OK");
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+    }
+}
